@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Assessment Questionnaire</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 25px;
+            background: #fafafa;
+        }
+
+        .section h2 {
+            color: #4facfe;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            border-bottom: 2px solid #4facfe;
+            padding-bottom: 10px;
+        }
+
+        .question {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #333;
+        }
+
+        /* Personal details input styles */
+        .personal-field {
+            margin-bottom: 20px;
+        }
+
+        .personal-field label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .personal-field input[type="text"],
+        .personal-field input[type="email"],
+        .personal-field input[type="tel"],
+        .personal-field input[type="number"],
+        .personal-field select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .personal-field input:focus,
+        .personal-field select:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        .personal-field.error input,
+        .personal-field.error select {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+
+        .personal-field.error label {
+            color: #721c24;
+        }
+
+        .options {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .option input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #4facfe;
+        }
+
+        .option label {
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .follow-up {
+            margin-top: 15px;
+            padding: 15px;
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .follow-up input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: block;
+            margin: 30px auto 0;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results {
+            display: none;
+            background: white;
+            margin-top: 30px;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .score-display {
+            font-size: 3em;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .grade {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 15px 0;
+            padding: 10px 20px;
+            border-radius: 50px;
+            display: inline-block;
+        }
+
+        .grade-A { background: #28a745; color: white; }
+        .grade-B { background: #17a2b8; color: white; }
+        .grade-C { background: #ffc107; color: black; }
+        .grade-D { background: #fd7e14; color: white; }
+        .grade-E { background: #dc3545; color: white; }
+
+        .description {
+            font-size: 1.1em;
+            margin-top: 20px;
+            color: #666;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4facfe;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Validation and Error Styling */
+        .question.error {
+            border: 2px solid #dc3545 !important;
+            background: #f8d7da !important;
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        .question.error .question-text {
+            color: #721c24 !important;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        /* Enhanced visual feedback for required fields */
+        .question-text {
+            position: relative;
+        }
+        
+        /* Highlight focused questions */
+        .question:focus-within,
+        .personal-field:focus-within {
+            border-color: #4facfe !important;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1) !important;
+        }
+        
+        /* Progress indicator */
+        .progress-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #4facfe;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 50px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .progress-indicator.complete {
+            background: #28a745;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .options {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .progress-indicator {
+                bottom: 10px;
+                right: 10px;
+                padding: 8px 12px;
+                font-size: 0.9em;
+            }
+        }
+
+        .required {
+            color: #dc3545;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 Health Assessment</h1>
+            <p>Complete this questionnaire to get your overall health status</p>
+        </div>
+        
+        <div class="form-container">
+            <form id="healthForm">
+                <!-- Personal Details Section -->
+                <div class="section">
+                    <h2>👤 Personal Details</h2>
+                    
+                    <div class="personal-field">
+                        <label for="name">Full Name <span class="required">*</span></label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+
+                    <div class="personal-field">
+                        <label for="email">Email Address <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+
+                    <div class="personal-field">
+                        <label for="phone">Phone Number <span class="required">*</span></label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+
+                    <div class="personal-field">
+                        <label for="age">Age <span class="required">*</span></label>
+                        <input type="number" id="age" name="age" min="1" max="120" required>
+                    </div>
+
+                    <div class="personal-field">
+                        <label for="gender">Gender <span class="required">*</span></label>
+                        <select id="gender" name="gender" required>
+                            <option value="">Select Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="non-binary">Non-Binary</option>
+                            <option value="prefer-not-to-say">Prefer not to say</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Physical Health Section -->
+                <div class="section">
+                    <h2>🏃‍♂️ Physical Health</h2>
+                    
+                    <div class="question">
+                        <div class="question-text">1. Do you exercise regularly (at least 3 times per week)?</div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q1" value="yes" id="q1_yes">
+                                <label for="q1_yes">Yes</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q1" value="no" id="q1_no">
+                                <label for="q1_no">No</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q1" value="sometimes" id="q1_sometimes">
+                                <label for="q1_sometimes">Sometimes</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">2. Do you get at least 7-8 hours of sleep per night?</div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q2" value="yes" id="q2_yes">
+                                <label for="q2_yes">Yes</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q2" value="no" id="q2_no">
+                                <label for="q2_no">No</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q2" value="sometimes" id="q2_sometimes">
+                                <label for="q2_sometimes">Sometimes</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">3. Do you eat a balanced diet with fruits and vegetables daily?</div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q3" value="yes" id="q3_yes">
+                                <label for="q3_yes">Yes</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q3" value="no" id="q3_no">
+                                <label for="q3_no">No</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q3" value="sometimes" id="q3_sometimes">
+                                <label for="q3_sometimes">Sometimes</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">4. Do you drink adequate water throughout the day (8+ glasses)?</div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q4" value="yes" id="q4_yes">
+                                <label for="q4_yes">Yes</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q4" value="no" id="q4_no">
+                                <label for="q4_no">No</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q4" value="sometimes" id="q4_sometimes">
+                                <label for="q4_sometimes">Sometimes</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">5. Are you free from chronic pain or physical discomfort?</div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q5" value="yes" id="q5_yes">
+                                <label for="q5_yes">Yes</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q5" value="no" id="q5_no">
+                                <label for="q5_no">No</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q5" value="sometimes" id="q5_sometimes">
+                                <label for="q5_sometimes">Sometimes</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mental & Emotional Health Section -->
+                <div class="section">
+                    <h2>🧠 Mental & Emotional Health</h2>
+                    
+                    <div class="question">
+                        <div class="question-text">6. Do you feel mentally sharp and focused most days?</div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q6" value="yes" id="q6_yes">
+                                <label for="q6_yes">Yes</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q6" value="no" id="q6_no">
+                                <label for="q6_no">No</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q6" value="sometimes" id="q6_sometimes">
+                                <label for="q6_sometimes">Sometimes</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">7. Are you generally happy and optimistic?</div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q7" value="yes" id="q7_yes">
+                                <label for="q7_yes">Yes</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q7" value="no" id="q7_no">
+                                <label for="q7_no">No</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q7" value="sometimes" id="q7_sometimes">
+                                <label for="q7_sometimes">Sometimes</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">8. Do you often feel anxious, overwhelmed, or sad?</div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q8" value="yes" id="q8_yes">
+                                <label for="q8_yes">Yes</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q8" value="no" id="q8_no">
+                                <label for="q8_no">No</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q8" value="sometimes" id="q8_sometimes">
+                                <label for="q8_sometimes">Sometimes</label>
+                            </div>
+                        </div>
+                        <div class="follow-up" id="q8_followup">
+                            <label for="q8_frequency"><strong>How often?</strong></label>
+                            <input type="text" name="q8_frequency" id="q8_frequency" placeholder="e.g., Daily, Weekly, Monthly">
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">9. Do you have effective ways to manage stress?</div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q9" value="yes" id="q9_yes">
+                                <label for="q9_yes">Yes</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q9" value="no" id="q9_no">
+                                <label for="q9_no">No</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q9" value="sometimes" id="q9_sometimes">
+                                <label for="q9_sometimes">Sometimes</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lifestyle Habits Section -->
+                <div class="section">
+                    <h2>🌱 Lifestyle Habits</h2>
+                    
+                    <div class="question">
+                        <div class="question-text">10. Do you avoid smoking and limit alcohol consumption?</div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q10" value="yes" id="q10_yes">
+                                <label for="q10_yes">Yes</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q10" value="no" id="q10_no">
+                                <label for="q10_no">No</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q10" value="sometimes" id="q10_sometimes">
+                                <label for="q10_sometimes">Sometimes</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">11. Do you maintain a healthy work-life balance?</div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q11" value="yes" id="q11_yes">
+                                <label for="q11_yes">Yes</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q11" value="no" id="q11_no">
+                                <label for="q11_no">No</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q11" value="sometimes" id="q11_sometimes">
+                                <label for="q11_sometimes">Sometimes</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">12. Do you take time for hobbies and relaxation?</div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q12" value="yes" id="q12_yes">
+                                <label for="q12_yes">Yes</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q12" value="no" id="q12_no">
+                                <label for="q12_no">No</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q12" value="sometimes" id="q12_sometimes">
+                                <label for="q12_sometimes">Sometimes</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">13. Do you limit screen time and take regular breaks from technology?</div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q13" value="yes" id="q13_yes">
+                                <label for="q13_yes">Yes</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q13" value="no" id="q13_no">
+                                <label for="q13_no">No</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q13" value="sometimes" id="q13_sometimes">
+                                <label for="q13_sometimes">Sometimes</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Social & Personal Wellness Section -->
+                <div class="section">
+                    <h2>👥 Social & Personal Wellness</h2>
+                    
+                    <div class="question">
+                        <div class="question-text">14. Do you have strong, supportive relationships?</div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q14" value="yes" id="q14_yes">
+                                <label for="q14_yes">Yes</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q14" value="no" id="q14_no">
+                                <label for="q14_no">No</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q14" value="sometimes" id="q14_sometimes">
+                                <label for="q14_sometimes">Sometimes</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">15. Do you feel a sense of purpose and meaning in your life?</div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q15" value="yes" id="q15_yes">
+                                <label for="q15_yes">Yes</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q15" value="no" id="q15_no">
+                                <label for="q15_no">No</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q15" value="sometimes" id="q15_sometimes">
+                                <label for="q15_sometimes">Sometimes</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">16. Are you satisfied with your current life situation overall?</div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q16" value="yes" id="q16_yes">
+                                <label for="q16_yes">Yes</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q16" value="no" id="q16_no">
+                                <label for="q16_no">No</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q16" value="sometimes" id="q16_sometimes">
+                                <label for="q16_sometimes">Sometimes</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">Submit Assessment</button>
+            </form>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Processing your assessment...</p>
+            </div>
+
+            <div class="results" id="results">
+                <h2>Your Health Assessment Results</h2>
+                <div class="score-display" id="scoreDisplay"></div>
+                <div class="grade" id="gradeDisplay"></div>
+                <div class="description" id="descriptionDisplay"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress indicator -->
+    <div class="progress-indicator" id="progressIndicator">0/21</div>
+
+    <script>
+        // // Handle follow-up question for Q8
+        // document.querySelectorAll('input[name="q8"]').forEach(radio => {
+        //     radio.addEventListener('change', function() {
+        //         const followUp = document.getElementById('q8_followup');
+        //         if (this.value === 'yes') {
+        //             followUp.style.display = 'block';
+        //         } else {
+        //             followUp.style.display = 'none';
+        //             document.getElementById('q8_frequency').value = '';
+        //         }
+                
+        //         // Remove error styling when question is answered
+        //         clearQuestionError('q8');
+        //     });
+        // });
+
+        // Add change listeners to all radio buttons to clear errors when answered
+        document.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                clearQuestionError(this.name);
+                updateProgress();
+            });
+        });
+
+        // Add input listeners for personal details
+        document.querySelectorAll('.personal-field input, .personal-field select').forEach(input => {
+            input.addEventListener('input', function() {
+                clearPersonalFieldError(this.name);
+                updateProgress();
+            });
+            
+            input.addEventListener('change', function() {
+                clearPersonalFieldError(this.name);
+                updateProgress();
+            });
+        });
+
+        // Function to validate personal details
+        function validatePersonalDetails() {
+            const personalFields = ['name', 'email', 'phone', 'age', 'gender'];
+            const missingFields = [];
+            const invalidFields = [];
+
+            personalFields.forEach(fieldName => {
+                const field = document.querySelector(`[name="${fieldName}"]`);
+                const value = field.value.trim();
+
+                if (!value) {
+                    missingFields.push(fieldName);
+                    return;
+                }
+
+                // Specific validations
+                switch (fieldName) {
+                    case 'email':
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        if (!emailRegex.test(value)) {
+                            invalidFields.push({ field: fieldName, message: 'Please enter a valid email address' });
+                        }
+                        break;
+                    case 'phone':
+                        const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+                        if (!phoneRegex.test(value.replace(/[\s\-\(\)]/g, ''))) {
+                            invalidFields.push({ field: fieldName, message: 'Please enter a valid phone number' });
+                        }
+                        break;
+                    case 'age':
+                        const age = parseInt(value);
+                        if (isNaN(age) || age < 1 || age > 120) {
+                            invalidFields.push({ field: fieldName, message: 'Please enter a valid age (1-120)' });
+                        }
+                        break;
+                }
+            });
+
+            return { missingFields, invalidFields };
+        }
+
+        // Function to highlight missing personal fields
+        function highlightMissingPersonalFields(missingFields, invalidFields) {
+            // Clear all previous error styling
+            document.querySelectorAll('.personal-field.error').forEach(field => {
+                field.classList.remove('error');
+            });
+            
+            // Add error styling to missing fields
+            [...missingFields, ...invalidFields.map(f => f.field)].forEach(fieldName => {
+                const fieldElement = document.querySelector(`[name="${fieldName}"]`).closest('.personal-field');
+                if (fieldElement) {
+                    fieldElement.classList.add('error');
+                }
+            });
+        }
+
+        // Function to clear error styling for personal fields
+        function clearPersonalFieldError(fieldName) {
+            const fieldElement = document.querySelector(`[name="${fieldName}"]`).closest('.personal-field');
+            if (fieldElement) {
+                fieldElement.classList.remove('error');
+            }
+        }
+
+        // Function to highlight unanswered questions
+        function highlightMissingQuestions(missingQuestions) {
+            // Clear all previous error styling
+            document.querySelectorAll('.question.error').forEach(question => {
+                question.classList.remove('error');
+            });
+            
+            // Add error styling to missing questions
+            missingQuestions.forEach(questionName => {
+                const questionElement = document.querySelector(`input[name="${questionName}"]`).closest('.question');
+                if (questionElement) {
+                    questionElement.classList.add('error');
+                }
+            });
+        }
+
+        // Function to clear error styling for a specific question
+        function clearQuestionError(questionName) {
+            const questionElement = document.querySelector(`input[name="${questionName}"]`).closest('.question');
+            if (questionElement) {
+                questionElement.classList.remove('error');
+            }
+        }
+
+        // Function to scroll to first missing field
+        function scrollToFirstMissingField(missingFields, missingQuestions) {
+            let firstMissing = null;
+            
+            if (missingFields.length > 0) {
+                firstMissing = document.querySelector(`[name="${missingFields[0]}"]`);
+            } else if (missingQuestions.length > 0) {
+                firstMissing = document.querySelector(`input[name="${missingQuestions[0]}"]`);
+            }
+            
+            if (firstMissing) {
+                firstMissing.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+                firstMissing.focus();
+            }
+        }
+
+        // Function to validate all questions are answered
+        function validateForm() {
+            const missingQuestions = [];
+            
+            // Check each question from 1 to 16
+            for (let i = 1; i <= 16; i++) {
+                const questionName = `q${i}`;
+                const selectedOption = document.querySelector(`input[name="${questionName}"]:checked`);
+                
+                if (!selectedOption) {
+                    missingQuestions.push(questionName);
+                }
+            }
+            
+            return missingQuestions;
+        }
+
+        // Function to display validation error message
+        function showValidationError(personalValidation, missingQuestions) {
+            // Remove any existing error message
+            const existingError = document.getElementById('validation-error');
+            if (existingError) {
+                existingError.remove();
+            }
+            
+            // Create error message
+            const errorDiv = document.createElement('div');
+            errorDiv.id = 'validation-error';
+            errorDiv.style.cssText = `
+                background: #f8d7da;
+                color: #721c24;
+                padding: 15px;
+                border-radius: 8px;
+                border: 1px solid #f5c6cb;
+                margin: 20px 0;
+                font-weight: 600;
+                text-align: left;
+                animation: fadeIn 0.3s ease-in-out;
+            `;
+            
+            let message = '<strong>Please complete the following:</strong><br>';
+            
+            if (personalValidation.missingFields.length > 0) {
+                const fieldNames = personalValidation.missingFields.map(f => 
+                    f.charAt(0).toUpperCase() + f.slice(1).replace(/([A-Z])/g, ' $1')
+                ).join(', ');
+                message += `• Missing personal details: ${fieldNames}<br>`;
+            }
+            
+            if (personalValidation.invalidFields.length > 0) {
+                personalValidation.invalidFields.forEach(invalid => {
+                    const fieldName = invalid.field.charAt(0).toUpperCase() + invalid.field.slice(1);
+                    message += `• ${fieldName}: ${invalid.message}<br>`;
+                });
+            }
+            
+            if (missingQuestions.length > 0) {
+                const questionNumbers = missingQuestions.map(q => q.replace('q', '')).sort((a, b) => parseInt(a) - parseInt(b));
+                message += `• Missing health questions: ${questionNumbers.join(', ')}<br>`;
+            }
+            
+            errorDiv.innerHTML = message;
+            
+            // Insert error message before the submit button
+            const submitBtn = document.querySelector('.submit-btn');
+            submitBtn.parentNode.insertBefore(errorDiv, submitBtn);
+            
+            // Auto-remove error message after 15 seconds
+            setTimeout(() => {
+                if (errorDiv.parentNode) {
+                    errorDiv.remove();
+                }
+            }, 15000);
+        }
+
+        // Progress tracking
+        function updateProgress() {
+            const totalFields = 21; // 5 personal details + 16 health questions
+            let completedFields = 0;
+            
+            // Check personal details
+            ['name', 'email', 'phone', 'age', 'gender'].forEach(fieldName => {
+                const field = document.querySelector(`[name="${fieldName}"]`);
+                if (field && field.value.trim()) {
+                    completedFields++;
+                }
+            });
+            
+            // Check health questions
+            for (let i = 1; i <= 16; i++) {
+                const questionName = `q${i}`;
+                const selectedOption = document.querySelector(`input[name="${questionName}"]:checked`);
+                if (selectedOption) {
+                    completedFields++;
+                }
+            }
+            
+            const progressIndicator = document.getElementById('progressIndicator');
+            progressIndicator.textContent = `${completedFields}/${totalFields}`;
+            
+            if (completedFields === totalFields) {
+                progressIndicator.classList.add('complete');
+                progressIndicator.textContent = '✓ Ready to Submit';
+            } else {
+                progressIndicator.classList.remove('complete');
+            }
+        }
+
+        // Handle form submission with validation
+        document.getElementById('healthForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Validate personal details
+            const personalValidation = validatePersonalDetails();
+            
+            // Validate health questions
+            const missingQuestions = validateForm();
+            
+            if (personalValidation.missingFields.length > 0 || 
+                personalValidation.invalidFields.length > 0 || 
+                missingQuestions.length > 0) {
+                
+                // Show validation error
+                showValidationError(personalValidation, missingQuestions);
+                highlightMissingPersonalFields(personalValidation.missingFields, personalValidation.invalidFields);
+                highlightMissingQuestions(missingQuestions);
+                scrollToFirstMissingField(personalValidation.missingFields, missingQuestions);
+                return; // Stop submission
+            }
+            
+            // Remove any existing validation error message
+            const existingError = document.getElementById('validation-error');
+            if (existingError) {
+                existingError.remove();
+            }
+            
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            this.style.display = 'none';
+            
+            // Collect form data
+            const formData = new FormData(this);
+            const responses = {};
+            const personalDetails = {};
+            
+            // Get personal details
+            ['name', 'email', 'phone', 'age', 'gender'].forEach(field => {
+                personalDetails[field] = formData.get(field);
+            });
+            
+            // Get all health question responses
+            for (let i = 1; i <= 16; i++) {
+                const questionName = `q${i}`;
+                const value = formData.get(questionName);
+                if (value) {
+                    responses[questionName] = value;
+                }
+            }
+            
+            // Get follow-up response for Q8 if applicable
+            const q8Frequency = formData.get('q8_frequency');
+            if (q8Frequency) {
+                responses['q8_frequency'] = q8Frequency;
+            }
+            
+            try {
+                // Submit to backend
+                const response = await fetch('/api/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        personalDetails: personalDetails,
+                        responses: responses,
+                        timestamp: new Date().toISOString()
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    displayResults(result);
+                } else {
+                    throw new Error(result.error || 'Submission failed');
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('There was an error submitting your assessment. Please try again.');
+                // Show form again
+                document.getElementById('loading').style.display = 'none';
+                this.style.display = 'block';
+            }
+        });
+
+        function displayResults(result) {
+            // Hide loading
+            document.getElementById('loading').style.display = 'none';
+            
+            // Show results
+            const resultsDiv = document.getElementById('results');
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            const gradeDisplay = document.getElementById('gradeDisplay');
+            const descriptionDisplay = document.getElementById('descriptionDisplay');
+            
+            scoreDisplay.textContent = `${result.score} / 16`;
+            gradeDisplay.textContent = `Grade: ${result.grade}`;
+            gradeDisplay.className = `grade grade-${result.grade}`;
+            descriptionDisplay.textContent = result.description;
+            
+            resultsDiv.style.display = 'block';
+            resultsDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Add visual feedback for required questions on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add required indicators to question text
+            document.querySelectorAll('.question-text').forEach(questionText => {
+                const requiredSpan = document.createElement('span');
+                requiredSpan.textContent = ' *';
+                requiredSpan.style.color = '#dc3545';
+                requiredSpan.style.fontWeight = 'bold';
+                questionText.appendChild(requiredSpan);
+            });
+            
+            // Add required notice at the top of the form
+            const requiredNotice = document.createElement('div');
+            requiredNotice.style.cssText = `
+                background: #d1ecf1;
+                color: #0c5460;
+                padding: 15px;
+                border-radius: 8px;
+                border: 1px solid #bee5eb;
+                margin-bottom: 30px;
+                font-weight: 600;
+                text-align: center;
+            `;
+            requiredNotice.innerHTML = '📋 All fields marked with <span style="color: #dc3545;">*</span> are required';
+            
+            const firstSection = document.querySelector('.section');
+            firstSection.parentNode.insertBefore(requiredNotice, firstSection);
+            
+            // Initialize progress
+            updateProgress();
+        });
+    </script>
+</body>
+</html>

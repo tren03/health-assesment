@@ -1,0 +1,13 @@
+{
+  "name": "health-assessment-questionnaire",
+  "version": "1.0.0",
+  "description": "Simple health assessment questionnaire with Google Sheets storage",
+  "main": "index.html",
+  "scripts": {},
+  "dependencies": {
+    "googleapis": "^126.0.1"
+  },
+  "devDependencies": {
+    "@vercel/node": "^3.0.0"
+  }
+}
