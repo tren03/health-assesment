@@ -27,7 +27,14 @@ const gradeDescriptions = {
 
 function validatePersonalDetails(personalDetails) {
   const errors = [];
-  const requiredFields = ["name", "email", "phone", "age", "gender"];
+  const requiredFields = [
+    "name",
+    "email",
+    "phone",
+    "age",
+    "gender",
+    "relationship",
+  ];
 
   // Check for missing fields
   requiredFields.forEach((field) => {
@@ -35,6 +42,19 @@ function validatePersonalDetails(personalDetails) {
       errors.push(`${field} is required`);
     }
   });
+  if (!personalDetails.rotarianName) {
+    personalDetails.rotarianName = "";
+  }
+
+  console.log(personalDetails)
+
+  // Validate 'Name of Rotarian' if applicable
+  if (
+    ["spouse", "ann", "rotal"].includes(personalDetails.relationship) &&
+    !personalDetails.rotarianName?.trim()
+  ) {
+    errors.push("Name of Rotarian is required for the selected relationship");
+  }
 
   // Validate email format
   if (personalDetails.email) {
@@ -111,14 +131,16 @@ export default async function handler(req, res) {
     if (!personalDetails || typeof personalDetails !== "object") {
       return res.status(400).json({ error: "Personal details are required" });
     }
+    // console.log(personalDetails)
 
     if (!responses || typeof responses !== "object") {
       return res.status(400).json({ error: "Invalid responses data" });
     }
-    console.log(responses)
+    // console.log(responses);
 
     // Validate personal details
     const personalValidationErrors = validatePersonalDetails(personalDetails);
+    console.log(personalValidationErrors)
     if (personalValidationErrors.length > 0) {
       return res.status(400).json({
         error: "Personal details validation failed",
@@ -152,10 +174,13 @@ export default async function handler(req, res) {
         phone: personalDetails.phone.trim(),
         age: parseInt(personalDetails.age),
         gender: personalDetails.gender.toLowerCase(),
+        relationship: personalDetails.relationship,
+        rotarianName: personalDetails.rotarianName?.trim() || null,
       },
       responses,
       result,
     };
+    console.log("Payload being sent to Apps Script:", payload);
 
     // Send to Apps Script
     let savedToSheets = false;
