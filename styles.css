@@ -89,8 +89,8 @@ body {
 
 @media (max-width: 768px) {
   .header-logos {
-    flex-direction: column;
-    gap: 15px;
+    flex-direction: row; /* Ensure logos are in a row */
+    justify-content: space-between; /* Distribute logos evenly */
   }
 
   .header-logo {
